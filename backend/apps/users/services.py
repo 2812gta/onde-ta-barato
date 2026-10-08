@@ -232,6 +232,16 @@ def export_user_data(user: User) -> dict[str, Any]:
             }
             for c in user.consents.order_by("created_at")
         ],
+        "shopping_lists": [
+            {
+                "name": shopping_list.name,
+                "items": [
+                    {"product": i.product_variant.product.name, "quantity": str(i.quantity)}
+                    for i in shopping_list.items.select_related("product_variant__product")
+                ],
+            }
+            for shopping_list in user.shopping_lists.all()
+        ],
         "activity": [
             {"action": a.action, "entity_type": a.entity_type, "at": a.created_at.isoformat()}
             for a in user.audit_logs.order_by("created_at")
@@ -245,6 +255,9 @@ def delete_account(*, user: User, password: str, request: HttpRequest | None = N
     if not user.check_password(password):
         raise InvalidCredentials
     revoke_all_tokens(user)
+    # Shopping habits are personal data with no history value: erased, not anonymized.
+    user.shopping_lists.all().delete()
+    user.shopping_carts.all().delete()
     audit.record("user.deleted", actor=user, entity_type="user", entity_id=user.pk, request=request)
     user.email = f"deleted-{user.pk}@deleted.invalid"
     user.display_name = ""

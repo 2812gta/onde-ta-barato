@@ -87,4 +87,25 @@ Buscas por proximidade continuam em `POST` (localização fora da URL). Ver [PRO
 
 Modos: `ECONOMIZAR_MAIS`, `MAIS_PROXIMO`, `MELHOR_CUSTO_BENEFICIO` (padrão), `MENOS_DESLOCAMENTO`, `MELHORES_PROMOCOES`.
 
-O OpenAPI (`/api/schema/`) documenta os 36 endpoints sem avisos.
+## Implementado (M4, backend)
+
+Listas e carrinho pertencem ao usuário logado. A lista ou o item de outra pessoa responde **404** (a existência não é revelada).
+
+| Método | Rota | Descrição |
+|---|---|---|
+| GET/POST | `/shopping-lists/` | Lista as suas listas (com `item_count` e `checked_count`) / cria `{name}` (máx. 20) |
+| GET/PATCH/DELETE | `/shopping-lists/{id}/` | Detalhe com itens / renomeia / apaga |
+| POST | `/shopping-lists/{id}/items/` | `{variant_id, quantity}`; o mesmo produto soma a quantidade (máx. 100 itens, 1000 por item) |
+| PATCH/DELETE | `/shopping-lists/{id}/items/{item_id}/` | Altera `quantity` e/ou `checked` / remove |
+| GET | `/shopping-cart/` | Carrinho aberto, **com preços calculados na hora**. Sem carrinho, devolve um vazio (`id: null`) e não cria nada |
+| PUT | `/shopping-cart/` | Define só o que for enviado: `store_id` (ou `null`), `payment_condition`, `has_loyalty`, `coupon_codes` |
+| POST | `/shopping-cart/items/` | `{variant_id, quantity}`; abre o carrinho se preciso |
+| PATCH/DELETE | `/shopping-cart/items/{id}/` | Altera `quantity` e/ou `in_basket` (já pegou da prateleira) / remove |
+| POST | `/shopping-cart/import-list/` | Copia uma lista sua para o carrinho (as quantidades somam) |
+| POST | `/shopping-cart/close/` | Finaliza a compra e guarda `final_total` e `final_savings` |
+
+**Resposta do carrinho:** `store`, as condições do comprador, `items` (cada um com `priced`, `unit_price`, `gross`, `net`, `savings`, `cashback`, `promotion`, `unconfirmed_potential`, `freshness`, `confidence`, `conflict`, `age_hours`), `totals` (`gross`, `total`, `savings`, `cashback`, `unconfirmed_potential`, `unpriced_count`) e `warnings`.
+
+Regras do preço, iguais às das recomendações (ADR 0012): preço vencido não é usado e o desatualizado é sinalizado; com fontes divergentes vale o **maior** preço; só promoção de comerciante **verificado** altera o total (as demais aparecem em `unconfirmed_potential`); item sem preço fica **fora** do total e é contado em `unpriced_count`, nunca estimado.
+
+O OpenAPI (`/api/schema/`) documenta os 45 endpoints sem avisos.
