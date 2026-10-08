@@ -22,6 +22,16 @@ PROTECTED = [
     "products/units.py",
     "products/normalization.py",
     "stores/selectors.py",
+    "promotions/engine.py",
+    "promotions/selectors.py",
+    "recommendations/config.py",
+    "recommendations/types.py",
+    "recommendations/quotes.py",
+    "recommendations/engine.py",
+    "recommendations/explain.py",
+    "recommendations/selectors.py",
+    "recommendations/services.py",
+    "recommendations/present.py",
 ]
 # Apps that carry money from merchants to the platform (some are created in later milestones).
 COMMERCIAL_APPS = {
