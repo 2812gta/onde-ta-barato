@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "apps.stores",
     "apps.products",
     "apps.prices",
+    "apps.promotions",
 ]
 
 MIDDLEWARE = [
@@ -194,6 +195,7 @@ SPECTACULAR_SETTINGS = {
         "StoreStatusEnum": "apps.stores.models.StoreStatus.choices",
         "StoreTypeEnum": "apps.stores.models.StoreType.choices",
         "PaymentConditionEnum": "apps.prices.models.PaymentCondition.choices",
+        "ShopperPaymentEnum": "apps.recommendations.serializers.SHOPPER_PAYMENT_CHOICES",
         "PriceSourceEnum": "apps.prices.models.PriceSource.choices",
     },
 }

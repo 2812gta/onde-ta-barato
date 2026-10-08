@@ -10,6 +10,7 @@ api_v1 = [
     path("", include("apps.stores.urls")),
     path("", include("apps.products.urls")),
     path("", include("apps.prices.urls")),
+    path("", include("apps.promotions.urls")),
 ]
 
 urlpatterns = [
