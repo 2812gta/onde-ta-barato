@@ -1,12 +1,15 @@
 # NOT YET VALIDATED: Docker is not installed on the dev machine (ADR 0001).
 # The first real build happens in CI (job "build") and on the VPS.
 #
-# GDAL/GEOS/PROJ are added in M2, together with the first geo model.
+# GeoDjango needs GDAL/GEOS/PROJ at runtime; installed from Debian packages below.
 
-FROM python:3.12-slim AS base
+FROM python:3.12-slim-bookworm AS base
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends gdal-bin libgdal-dev libgeos-dev \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 RUN groupadd --system app && useradd --system --gid app --home /app app
 

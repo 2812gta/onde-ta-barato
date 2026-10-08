@@ -7,6 +7,8 @@ from pathlib import Path
 import dj_database_url
 from dotenv import load_dotenv
 
+from config.gis import gis_library_settings
+
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 REPO_ROOT = BASE_DIR.parent
 
@@ -35,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.gis",
     # Third party
     "rest_framework",
     "rest_framework_simplejwt.token_blacklist",
@@ -77,13 +80,25 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 
-# Engine switches to django.contrib.gis.db.backends.postgis in M2 (first geo model).
 DATABASES = {
-    "default": dj_database_url.parse(
-        os.environ.get("DATABASE_URL", "postgres://ondetabarato@localhost:5432/ondetabarato"),
-        conn_max_age=60,
-    )
+    "default": {
+        **dj_database_url.parse(
+            os.environ.get("DATABASE_URL", "postgres://ondetabarato@localhost:5432/ondetabarato"),
+            conn_max_age=60,
+        ),
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
+    }
 }
+# Local dev: the app role is not a superuser and cannot CREATE EXTENSION, so test databases
+# are cloned from a template that already has PostGIS (see docs/DEVELOPMENT.md).
+if os.environ.get("DB_TEST_TEMPLATE"):
+    DATABASES["default"]["TEST"] = {"TEMPLATE": os.environ["DB_TEST_TEMPLATE"]}
+
+# GeoDjango libraries: only set on Windows dev machines (Linux uses system packages).
+_gis = gis_library_settings()
+if _gis:
+    GDAL_LIBRARY_PATH = _gis["GDAL_LIBRARY_PATH"]
+    GEOS_LIBRARY_PATH = _gis["GEOS_LIBRARY_PATH"]
 
 AUTH_USER_MODEL = "users.User"
 

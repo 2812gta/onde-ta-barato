@@ -5,7 +5,7 @@ Regra: executar o marco, testar, documentar, apresentar e **aguardar aprovação
 | Marco | Escopo | Estado |
 |---|---|---|
 | M0 Fundação | Auditoria do ambiente, Git, estrutura, documentação inicial | Concluído |
-| M1 Backend | Django + DRF, PostgreSQL, JWT, RBAC (com matriz de permissões), AuditLog, OpenAPI, rate limiting, e-mail transacional, consentimento e exclusão de conta (LGPD), soft delete, **CI (GitHub Actions)**, Dockerfile `dev`/`prod` | **Em validação.** PostGIS adiado para o M2 (não instalado localmente). CI, Dockerfile e compose escritos mas **não executados** |
+| M1 Backend | Django + DRF, PostgreSQL, JWT, RBAC (com matriz de permissões), AuditLog, OpenAPI, rate limiting, e-mail transacional, consentimento e exclusão de conta (LGPD), soft delete, **CI (GitHub Actions)**, Dockerfile `dev`/`prod` | **Em validação.** PostGIS 3.6 e GeoDjango validados localmente. CI, Dockerfile e compose escritos mas **não executados** |
 | M2 Núcleo comercial | Merchant, Store (PointField), Product/Variant (GTIN), Category, PriceObservation/Evidence, histórico, confiança, **seed de lojas e produtos** | Pendente |
 | M3 Inteligência de preços | Preço por unidade, promoções, conflitos, score, custo-benefício, distância, teste de isolamento comercial | Pendente |
 | M4 Flutter | Login, localização, lojas próximas, produtos, preços, lista, carrinho | Pendente |

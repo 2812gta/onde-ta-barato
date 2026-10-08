@@ -17,7 +17,18 @@ CREATE ROLE ondetabarato LOGIN CREATEDB PASSWORD '<senha-forte>';
 CREATE DATABASE ondetabarato OWNER ondetabarato ENCODING 'UTF8';
 ```
 
-Copie `.env.example` para `.env` na raiz do repositório e preencha `SECRET_KEY`, `JWT_SECRET` e `DATABASE_URL`. O `.env` é ignorado pelo Git e **nunca** é carregado com `config.settings.production`.
+Instale PostGIS (Stack Builder/EDB) e crie um template para os testes, com o superusuário (uma vez):
+
+```sql
+CREATE DATABASE template_postgis TEMPLATE template0 ENCODING 'UTF8';
+UPDATE pg_database SET datistemplate = true WHERE datname = 'template_postgis';
+\c template_postgis
+CREATE EXTENSION postgis;
+\c ondetabarato
+CREATE EXTENSION postgis;
+```
+
+Copie `.env.example` para `.env` na raiz do repositório e preencha `SECRET_KEY`, `JWT_SECRET` e `DATABASE_URL`, e defina `DB_TEST_TEMPLATE=template_postgis`. O `.env` é ignorado pelo Git e **nunca** é carregado com `config.settings.production`.
 
 ## Comandos
 

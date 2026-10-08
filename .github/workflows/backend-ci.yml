@@ -43,6 +43,8 @@ jobs:
           python-version: "3.12"
           cache: pip
           cache-dependency-path: backend/requirements/*.txt
+      - name: GeoDjango system libraries
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends gdal-bin libgdal-dev libgeos-dev
       - run: pip install -r requirements/dev.txt
       # Gate 1: lint -> format
       - run: ruff check .
