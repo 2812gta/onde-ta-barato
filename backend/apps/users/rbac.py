@@ -16,17 +16,43 @@ USERS_VIEW = "users.view"
 USERS_MANAGE = "users.manage"
 USERS_CHANGE_ROLE = "users.change_role"
 AUDIT_VIEW = "audit.view"
+CATALOG_WRITE = "catalog.write"
+MERCHANTS_REVIEW = "merchants.review"
+MERCHANTS_SUSPEND = "merchants.suspend"
 
-ALL_PERMISSIONS = frozenset({USERS_VIEW, USERS_MANAGE, USERS_CHANGE_ROLE, AUDIT_VIEW})
+ALL_PERMISSIONS = frozenset(
+    {
+        USERS_VIEW,
+        USERS_MANAGE,
+        USERS_CHANGE_ROLE,
+        AUDIT_VIEW,
+        CATALOG_WRITE,
+        MERCHANTS_REVIEW,
+        MERCHANTS_SUSPEND,
+    }
+)
 
+_MERCHANT = frozenset({CATALOG_WRITE})
+
+# Object-level rules (e.g. "publish prices for THIS store") live in merchants.services via
+# MerchantMembership; these global permissions only cover cross-cutting capabilities.
 ROLE_PERMISSIONS: dict[str, frozenset[str]] = {
     Role.CUSTOMER: frozenset(),
-    Role.MERCHANT_OWNER: frozenset(),
-    Role.MERCHANT_MANAGER: frozenset(),
-    Role.MERCHANT_OPERATOR: frozenset(),
-    Role.MODERATOR: frozenset({USERS_VIEW}),
+    Role.MERCHANT_OWNER: _MERCHANT,
+    Role.MERCHANT_MANAGER: _MERCHANT,
+    Role.MERCHANT_OPERATOR: _MERCHANT,
+    Role.MODERATOR: frozenset({USERS_VIEW, CATALOG_WRITE, MERCHANTS_REVIEW}),
     Role.SUPPORT: frozenset({USERS_VIEW}),
-    Role.ADMIN: frozenset({USERS_VIEW, USERS_MANAGE, AUDIT_VIEW}),
+    Role.ADMIN: frozenset(
+        {
+            USERS_VIEW,
+            USERS_MANAGE,
+            AUDIT_VIEW,
+            CATALOG_WRITE,
+            MERCHANTS_REVIEW,
+            MERCHANTS_SUSPEND,
+        }
+    ),
     Role.SUPERADMIN: ALL_PERMISSIONS,
 }
 

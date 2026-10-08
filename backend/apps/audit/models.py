@@ -1,23 +1,16 @@
 import uuid
-from typing import Any
 
 from django.conf import settings
 from django.db import models
 
+from apps.core import clock
+from apps.core.append_only import AppendOnlyModel, ImmutableRecordError
 
-class ImmutableAuditError(Exception):
-    """Audit records are append-only."""
-
-
-class AuditQuerySet(models.QuerySet["AuditLog"]):
-    def update(self, **kwargs: Any) -> int:
-        raise ImmutableAuditError("AuditLog is append-only")
-
-    def delete(self) -> tuple[int, dict[str, int]]:
-        raise ImmutableAuditError("AuditLog is append-only")
+# Backwards-compatible name used by callers and tests.
+ImmutableAuditError = ImmutableRecordError
 
 
-class AuditLog(models.Model):
+class AuditLog(AppendOnlyModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -33,9 +26,7 @@ class AuditLog(models.Model):
     new_value = models.JSONField(null=True, blank=True)
     ip_address = models.GenericIPAddressField(null=True, blank=True)
     metadata = models.JSONField(default=dict, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
-
-    objects = AuditQuerySet.as_manager()
+    created_at = models.DateTimeField(default=clock.now, editable=False, db_index=True)
 
     class Meta:
         ordering = ["-created_at"]
@@ -43,11 +34,3 @@ class AuditLog(models.Model):
 
     def __str__(self) -> str:
         return f"{self.action} {self.entity_type}:{self.entity_id}"
-
-    def save(self, *args: Any, **kwargs: Any) -> None:
-        if not self._state.adding:
-            raise ImmutableAuditError("AuditLog is append-only")
-        super().save(*args, **kwargs)
-
-    def delete(self, *args: Any, **kwargs: Any) -> tuple[int, dict[str, int]]:
-        raise ImmutableAuditError("AuditLog is append-only")

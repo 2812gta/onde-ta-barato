@@ -1,4 +1,5 @@
 import uuid
+from typing import TypeVar
 
 from django.db import models
 from django.utils import timezone
@@ -15,22 +16,25 @@ class TimeStampedModel(models.Model):
         abstract = True
 
 
-class SoftDeleteQuerySet(models.QuerySet["SoftDeleteModel"]):
+_M = TypeVar("_M", bound=models.Model)
+
+
+class SoftDeleteQuerySet(models.QuerySet[_M]):
     def delete(self) -> tuple[int, dict[str, int]]:
         count = self.update(deleted_at=timezone.now())
         return count, {self.model._meta.label: count}
 
-    def alive(self) -> "SoftDeleteQuerySet":
+    def alive(self) -> "SoftDeleteQuerySet[_M]":
         return self.filter(deleted_at__isnull=True)
 
-    def dead(self) -> "SoftDeleteQuerySet":
+    def dead(self) -> "SoftDeleteQuerySet[_M]":
         return self.filter(deleted_at__isnull=False)
 
 
-class SoftDeleteManager(models.Manager["SoftDeleteModel"]):
+class SoftDeleteManager(models.Manager[_M]):
     """Default manager hides soft-deleted rows. Use `all_objects` to see them."""
 
-    def get_queryset(self) -> SoftDeleteQuerySet:
+    def get_queryset(self) -> SoftDeleteQuerySet[_M]:
         return SoftDeleteQuerySet(self.model, using=self._db).filter(deleted_at__isnull=True)
 
 
@@ -40,7 +44,7 @@ class SoftDeleteModel(models.Model):
     deleted_at = models.DateTimeField(null=True, blank=True, db_index=True)
 
     objects = SoftDeleteManager()
-    all_objects = models.Manager["SoftDeleteModel"]()
+    all_objects = models.Manager()  # noqa: DJ012 - a second manager, not a field
 
     class Meta:
         abstract = True

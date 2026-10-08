@@ -25,6 +25,14 @@ class TestPermissionMatrix:
             (Role.ADMIN, rbac.USERS_CHANGE_ROLE, False),
             (Role.SUPERADMIN, rbac.USERS_CHANGE_ROLE, True),
             (Role.SUPERADMIN, rbac.AUDIT_VIEW, True),
+            (Role.CUSTOMER, rbac.CATALOG_WRITE, False),
+            (Role.MERCHANT_OPERATOR, rbac.CATALOG_WRITE, True),
+            (Role.MERCHANT_OWNER, rbac.MERCHANTS_REVIEW, False),
+            (Role.SUPPORT, rbac.MERCHANTS_REVIEW, False),
+            (Role.MODERATOR, rbac.MERCHANTS_REVIEW, True),
+            (Role.MODERATOR, rbac.MERCHANTS_SUSPEND, False),
+            (Role.ADMIN, rbac.MERCHANTS_SUSPEND, True),
+            (Role.SUPERADMIN, rbac.MERCHANTS_SUSPEND, True),
         ],
     )
     def test_matrix(self, role, permission, allowed):
