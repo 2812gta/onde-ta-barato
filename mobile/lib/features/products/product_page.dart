@@ -42,6 +42,8 @@ class ProductPage extends ConsumerWidget {
     );
     if (ok && context.mounted) {
       ref.invalidate(listsProvider);
+      // The list screen may still be open in the Lists tab: refresh it, or it shows old data.
+      ref.invalidate(listDetailProvider(target));
       notify(context, 'Adicionado à lista.');
     }
   }
