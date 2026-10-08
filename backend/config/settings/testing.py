@@ -19,5 +19,7 @@ REST_FRAMEWORK = {  # noqa: F405
         "register": "100000/min",
         "password_reset": "100000/min",
         "verification": "100000/min",
+        "geo": "100000/min",
+        "price_write": "100000/min",
     },
 }

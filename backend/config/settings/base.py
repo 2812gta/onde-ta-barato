@@ -47,6 +47,10 @@ INSTALLED_APPS = [
     "apps.core",
     "apps.users",
     "apps.audit",
+    "apps.merchants",
+    "apps.stores",
+    "apps.products",
+    "apps.prices",
 ]
 
 MIDDLEWARE = [
@@ -157,10 +161,12 @@ REST_FRAMEWORK = {
         "register": "10/hour",
         "password_reset": "5/hour",
         "verification": "5/hour",
+        "geo": "120/min",
+        "price_write": "60/hour",
     },
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 50,
-    "EXCEPTION_HANDLER": "rest_framework.views.exception_handler",
+    "EXCEPTION_HANDLER": "apps.core.api.exception_handler",
 }
 
 SIMPLE_JWT = {
@@ -180,6 +186,16 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "0.1.0",
     "SERVE_INCLUDE_SCHEMA": False,
     "COMPONENT_SPLIT_REQUEST": True,
+    # Stable, readable enum names in the generated API schema (and future client code).
+    "ENUM_NAME_OVERRIDES": {
+        "RoleEnum": "apps.users.models.Role.choices",
+        "MemberRoleEnum": "apps.merchants.models.MemberRole.choices",
+        "VerificationStatusEnum": "apps.merchants.models.VerificationStatus.choices",
+        "StoreStatusEnum": "apps.stores.models.StoreStatus.choices",
+        "StoreTypeEnum": "apps.stores.models.StoreType.choices",
+        "PaymentConditionEnum": "apps.prices.models.PaymentCondition.choices",
+        "PriceSourceEnum": "apps.prices.models.PriceSource.choices",
+    },
 }
 
 # --- Project rules ---
@@ -187,6 +203,12 @@ LOGIN_MAX_FAILURES = 5
 LOGIN_LOCKOUT_SECONDS = 15 * 60
 EMAIL_VERIFICATION_MAX_AGE_SECONDS = 48 * 3600
 PASSWORD_RESET_TIMEOUT = 1 * 3600  # Django's token generator setting (seconds)
+# --- Prices (see docs/DATA_INTEGRITY.md) ---
+PRICE_DEFAULT_TTL_HOURS = 168  # used when a product has no category
+PRICE_DEDUP_HOURS = 6  # same price re-reported inside this window does not create a new row
+PRICE_MAX_LISTED_AGE_DAYS = 90  # older observations stay in history but leave live listings
+# Optional override of confidence weights: PRICE_CONFIDENCE = {"evidence_bonus": 0.1, ...}
+
 # IP is personal data under LGPD: stored in AuditLog only when explicitly enabled.
 AUDIT_STORE_IP = env_bool("AUDIT_STORE_IP", False)
 
