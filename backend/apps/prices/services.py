@@ -10,7 +10,6 @@ from django.contrib.gis.measure import D
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.files.base import ContentFile
 from django.db import IntegrityError, transaction
-from django.utils import timezone
 
 from apps.audit import services as audit
 from apps.core import clock
@@ -185,7 +184,7 @@ def confirm_price(*, observation: PriceObservation, actor: User, agrees: bool) -
         collected_at=observation.collected_at,
         valid_until=observation.valid_until,
         ttl_hours=ttl_hours_for(observation.product_variant),
-        now=timezone.now(),
+        now=clock.now(),
     )
     if state == Freshness.EXPIRED:
         raise ValidationError("Este preço expirou e não pode mais ser confirmado.")

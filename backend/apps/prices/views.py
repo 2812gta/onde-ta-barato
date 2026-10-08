@@ -1,13 +1,13 @@
 from typing import cast
 
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.core import clock
 from apps.products.models import ProductVariant
 from apps.stores import selectors as store_selectors
 from apps.stores.models import Store
@@ -71,7 +71,7 @@ class VariantPricesSearchView(APIView):
         return Response(
             {
                 "variant_id": str(variant.pk),
-                "generated_at": timezone.now(),
+                "generated_at": clock.now(),
                 "radius_km": data["radius_km"],
                 "stores_in_radius": len(stores),
                 "stores_with_price": len(results),

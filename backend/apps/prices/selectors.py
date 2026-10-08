@@ -13,8 +13,8 @@ from typing import Any
 
 from django.conf import settings
 from django.db.models import Count, QuerySet
-from django.utils import timezone
 
+from apps.core import clock
 from apps.products.models import ProductVariant
 from apps.products.units import UnitPrice, unit_price
 
@@ -145,7 +145,7 @@ def current_prices(
     Old prices are included and labelled STALE/EXPIRED rather than hidden, up to a listing
     horizon (PRICE_MAX_LISTED_AGE_DAYS) after which they are only reachable via history.
     """
-    now = now or timezone.now()
+    now = now or clock.now()
     horizon = now - timedelta(days=getattr(settings, "PRICE_MAX_LISTED_AGE_DAYS", 90))
     observations = list(
         PriceObservation.objects.filter(
