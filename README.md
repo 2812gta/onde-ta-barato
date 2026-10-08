@@ -6,7 +6,7 @@ Assistente inteligente de compras: ajuda o consumidor a descobrir **onde vale ma
 
 ## Status
 
-**M0 — Fundação** (em validação). Nenhum código de aplicação existe ainda. Veja [docs/ROADMAP.md](docs/ROADMAP.md).
+**M1 — Backend** (em validação): autenticação, RBAC, auditoria, LGPD básica. Status real e pendências em [docs/ROADMAP.md](docs/ROADMAP.md).
 
 ## Stack
 
@@ -14,17 +14,17 @@ Assistente inteligente de compras: ajuda o consumidor a descobrir **onde vale ma
 |---|---|
 | Backend | Python 3.12, Django, DRF, PostgreSQL + PostGIS, Redis, Celery |
 | Mobile | Flutter/Dart (Android no MVP; arquitetura preparada para iOS) |
-| Infra | Docker (dev e prod), Nginx em produção, GitHub Actions |
+| Infra | Docker na VPS (produção), Nginx, GitHub Actions |
 
 Arquitetura: **monólito modular** (sem microserviços). Detalhes em [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Ambiente
 
-Desenvolvimento em Windows; produção em Linux. O backend roda em containers Linux para garantir paridade. Resultado da auditoria e pendências: [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md).
+Desenvolvimento em Windows; produção em Linux. Local: nativo no Windows. Produção: Docker na VPS Linux. O CI roda a suíte em Ubuntu a cada push (ADR 0001). Resultado da auditoria e pendências: [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md).
 
 ## Documentação
 
-- [Arquitetura](docs/ARCHITECTURE.md) · [Roadmap](docs/ROADMAP.md) · [Modelo de dados](docs/DATA_MODEL.md) · [API](docs/API.md)
+- [Desenvolvimento local](docs/DEVELOPMENT.md) · [Arquitetura](docs/ARCHITECTURE.md) · [Roadmap](docs/ROADMAP.md) · [Modelo de dados](docs/DATA_MODEL.md) · [API](docs/API.md)
 - [Integridade dos dados](docs/DATA_INTEGRITY.md) · [Confiança do usuário](docs/USER_TRUST.md) · [Governança de IA](docs/AI_GOVERNANCE.md)
 - [Segurança](docs/SECURITY.md) · [LGPD](docs/LGPD.md) · [Privacidade](docs/PRIVACY.md) · [Termos](docs/TERMS.md) · [Política de contribuição](docs/CONTRIBUTION_POLICY.md)
 - [Decisões de arquitetura (ADR)](docs/adr/)

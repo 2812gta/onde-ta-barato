@@ -1,0 +1,37 @@
+[project]
+name = "ondetabarato-backend"
+version = "0.1.0"
+requires-python = ">=3.12,<3.13"
+
+[tool.black]
+line-length = 100
+target-version = ["py312"]
+extend-exclude = "migrations|\\.venv"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["migrations", ".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "DJ", "S", "C4", "SIM"]
+ignore = ["DJ001"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S105", "S106"]
+"config/settings/*" = ["F403", "F405"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.testing"
+python_files = ["test_*.py"]
+addopts = "-ra --strict-markers --reuse-db"
+testpaths = ["tests"]
+
+[tool.mypy]
+python_version = "3.12"
+plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+ignore_missing_imports = true
+exclude = ["migrations", "tests", ".venv"]
+
+[tool.django-stubs]
+django_settings_module = "config.settings.testing"
