@@ -68,3 +68,23 @@ Todos exigem autenticação. **A localização vai no corpo de `POST`, nunca na 
 Cada preço devolvido traz: valor, moeda, condição de pagamento, `source`, `collected_at`, `age_hours`, `status` (`CURRENT`, `STALE`, `EXPIRED` ou `CONFLICTING`), `verification`, `confidence_score/level/factors`, confirmações, `unit_price` (ex.: `R$ 4,98/kg`) e o aviso "Pode haver diferença no caixa.".
 
 Erros de regra de negócio retornam 400; falta de permissão, 403. O OpenAPI (`/api/schema/`) documenta os 31 endpoints sem avisos.
+
+## Implementado (M3)
+
+Buscas por proximidade continuam em `POST` (localização fora da URL). Ver [PROMOTIONS.md](PROMOTIONS.md) e [RECOMMENDATIONS.md](RECOMMENDATIONS.md).
+
+| Método | Rota | Acesso | Descrição |
+|---|---|---|---|
+| GET/POST | `/stores/{id}/promotions/` | autenticado / equipe da loja | Lista promoções ativas / cria (regra validada; `confirmed` indica se o comerciante é verificado) |
+| DELETE | `/promotions/{id}/` | equipe da loja | Desativa (não apaga) |
+| POST | `/promotions/calculate/` | autenticado | Calculadora sem estado: `{unit_price, quantity, rule, payment_condition, has_loyalty, coupon_codes}` |
+| POST | `/recommendations/basket/` | autenticado, 120/min | Onde comprar a lista: `{items, lat, lon, radius_km, mode, payment_condition, has_loyalty, coupon_codes, cost_per_km?, max_stores}` |
+| POST | `/variants/{id}/compare/` | autenticado, 120/min | Um produto em várias lojas, por preço por unidade |
+
+**Resposta da recomendação:** `verdict` (`RECOMMENDED`, `TIE` ou `INSUFFICIENT_DATA`), `message`, `best` (plano com lojas, linhas, totais, `route_km`, `score_breakdown`), `alternatives`, `reasons` (cada uma com `code` e texto gerado dos números), `warnings`, `assumptions` (R$/km, fator de desvio, tratamento de conflito e de promoções) e `searched`. Quando faltam dados, `best` vem nulo e não há `reasons`.
+
+**Resposta da comparação:** `label` ("Menor preço encontrado na nossa base" só quando verdadeiro), `notes`, `analysis` (data, lojas no raio, lojas com preço, cobertura, condições) e `results` ordenados por preço por unidade, com `rank`, `price_range` quando há conflito, `freshness`, `confidence` e se o comerciante é verificado (informativo; não reordena).
+
+Modos: `ECONOMIZAR_MAIS`, `MAIS_PROXIMO`, `MELHOR_CUSTO_BENEFICIO` (padrão), `MENOS_DESLOCAMENTO`, `MELHORES_PROMOCOES`.
+
+O OpenAPI (`/api/schema/`) documenta os 36 endpoints sem avisos.

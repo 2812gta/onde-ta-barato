@@ -34,7 +34,7 @@ Apps são criados **somente no marco em que são usados**:
 |---|---|---|
 | M1 | `core`, `users`, `audit` (`locations` entra no M2 com o PostGIS) | User, Consent, papéis (RBAC), AuditLog; base models, soft delete, utilitários de dinheiro |
 | M2 | `merchants`, `stores`, `products`, `prices` | Merchant, MerchantVerification, Store, Brand, Category, Product, ProductVariant, PriceObservation, PriceEvidence; comandos de seed (lojas via OSM, produtos via Open Food Facts) |
-| M3 | `promotions`, `offers`, `recommendations` | Promotion, Offer; motor de promoções; preço por unidade; consenso/confiança; score de custo-benefício |
+| M3 | `promotions`, `recommendations` | Promotion; motor de promoções; comparação por unidade; score de custo-benefício. `offers` (ofertas/encartes/patrocínio) foi **adiado para o M6/M8** para não criar um app vazio |
 | M4 | `shopping_lists`, `shopping_cart` | ShoppingList(Item), ShoppingCart(Item) |
 | M5 | `ocr`, `ai`, `fraud` | UserContribution (em `prices`), FraudSignal, AIProcessingJob; AIProvider, OCRProvider |
 | M6 | portal do comerciante, moderação | verificação, publicação de preços/ofertas, fila de moderação |

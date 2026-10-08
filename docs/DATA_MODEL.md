@@ -63,6 +63,10 @@ location_verified                        # o aparelho estava perto da loja; coor
 - **Deduplicação:** o mesmo preço (mesma condição, fonte, promoção e validade) reportado dentro de `PRICE_DEDUP_HOURS` (6 h) não cria nova linha.
 - Fontes `HISTORICAL`, `CALCULATED`, `FLYER` e `PUBLIC_SOURCE` existem no enum e na fórmula de confiança, mas ainda não têm fluxo de entrada (encartes: fase 2).
 
+### Promotion (M3)
+
+`store`, `product_variant`, `title`, `rule` (JSON validado por `promotions/engine.py`), `valid_from`, `valid_until` (> início), `is_active`, `created_by`. Desativar não apaga: o registro do que foi oferecido permanece. É dado de preço do comerciante, não anúncio: não há posição, orçamento nem destaque. Ver [PROMOTIONS.md](PROMOTIONS.md).
+
 ### Evidência
 
 `PriceEvidence`: foto/encarte (arquivo privado, sem URL pública) ou link `http(s)`. Imagens são validadas e **reencodadas em JPEG sem metadados** (remove EXIF/GPS e conteúdo anexado), limite de 8 MB e 40 MP, SHA-256 do arquivo final. Ainda **não há endpoint de upload**: o serviço existe e é testado; o endpoint entra com a câmera (M5).
