@@ -145,6 +145,9 @@ void main() {
     await pumpCart(tester, Cart.fromJson(json));
 
     expect(find.text('Escolher o mercado'), findsOneWidget);
+    // Not "no price at this store": no store was chosen yet.
+    expect(find.text('Escolha o mercado para ver o preço'), findsOneWidget);
+    expect(find.text('Sem preço atual neste mercado'), findsNothing);
   });
 
   testWidgets('the + button asks the server for the next quantity', (

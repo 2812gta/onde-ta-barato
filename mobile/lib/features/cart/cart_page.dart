@@ -134,7 +134,8 @@ class _CartBody extends ConsumerWidget {
                   ),
                 )
               else
-                for (final line in cart.items) _LineTile(line: line),
+                for (final line in cart.items)
+                  _LineTile(line: line, storeChosen: cart.store != null),
             ],
           ),
         ),
@@ -196,9 +197,12 @@ class _CartBody extends ConsumerWidget {
 }
 
 class _LineTile extends ConsumerWidget {
-  const _LineTile({required this.line});
+  const _LineTile({required this.line, required this.storeChosen});
 
   final CartLine line;
+
+  /// Without a store nothing can be priced yet; say that instead of "no price here".
+  final bool storeChosen;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -207,8 +211,10 @@ class _LineTile extends ConsumerWidget {
     final details = <String>[
       if (line.priced)
         '${formatMoney(line.unitPrice)} × ${formatQuantity(line.quantity)}'
+      else if (storeChosen)
+        'Sem preço atual neste mercado'
       else
-        'Sem preço atual neste mercado',
+        'Escolha o mercado para ver o preço',
     ];
     return Dismissible(
       key: ValueKey(line.id),
