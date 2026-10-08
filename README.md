@@ -6,7 +6,7 @@ Assistente inteligente de compras: ajuda o consumidor a descobrir **onde vale ma
 
 ## Status
 
-**M2 — Núcleo comercial** (em validação): comerciantes, lojas com geolocalização, catálogo por GTIN, histórico de preços com confiança explicável. M0 e M1 concluídos. Status real e pendências em [docs/ROADMAP.md](docs/ROADMAP.md).
+**M3 — Inteligência de preços** (em validação): promoções, comparação por preço por unidade e recomendação explicável de onde comprar. M2 (núcleo comercial) em revisão; M0 e M1 concluídos. Status real e pendências em [docs/ROADMAP.md](docs/ROADMAP.md).
 
 ## Stack
 
