@@ -1,5 +1,7 @@
 # ADR 0003: Gerenciador de dependências Python
 
-Status: **Aguardando decisão**
+Status: **Aceita**
 
-Python 3.12 (3.14 descartado por compatibilidade). Opções: **uv** (rápido, lockfile, `pyproject.toml`; recomendado) ou pip + `requirements/*.txt` (sem instalação extra). Como o backend roda em container, a escolha afeta principalmente o Dockerfile e o fluxo de CI.
+Python 3.12 com `venv` e **pip** + `requirements/{base,dev,prod}.txt` com versões fixadas. Sem `uv` por ora (nada extra a instalar). Reavaliar quando houver lockfile hash-pinned no CI.
+
+Python 3.14 descartado (compatibilidade de dependências).

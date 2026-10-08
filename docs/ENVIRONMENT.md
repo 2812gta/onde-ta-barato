@@ -28,15 +28,22 @@ Data: 2026-10-07. Máquina de desenvolvimento do projeto. Nada foi instalado dur
 
 ## Riscos
 
-1. **Disco (12,9 GB livres).** Docker Desktop + disco virtual do WSL2 + imagens (Postgres/PostGIS, Redis, Python) + emulador Android podem ultrapassar isso. Liberar espaço ou mover o disco do WSL2 para outra unidade.
-2. **Docker/WSL2 ausentes.** Sem eles não há ambiente reproduzível nem paridade com produção Linux. A instalação exige administrador e provavelmente reinício.
-3. **PostgreSQL nativo ocupa a 5432.** O container de desenvolvimento usará **5433** para não conflitar.
+1. **Disco (12,9 GB livres).** Emulador Android, builds Flutter e PostGIS/GDAL podem ultrapassar isso. Acompanhar.
+2. **Docker/WSL2 ausentes (decisão: só na VPS).** Sem paridade local com Linux; mitigado pelo CI em Ubuntu. Dockerfile e compose não são executáveis aqui.
+3. **PostGIS ausente no PostgreSQL local.** Bloqueia o primeiro modelo geoespacial (M2). Requer instalação com administrador.
 4. **Fim de linha / caixa de nomes.** Windows (CRLF, case-insensitive) vs Linux (LF, case-sensitive). Mitigado com `.gitattributes` e `.editorconfig`; nomes de arquivo sempre em minúsculas.
 5. **Flutter defasado.** Pacotes novos podem exigir SDK mais recente. Decidir a atualização no início do M4.
 6. **iOS sem Mac.** Build/assinatura iOS só via macOS (CI em nuvem ou Mac físico).
 
+## Atualização (M1)
+
+- Decisão: **Docker só na VPS**; desenvolvimento nativo no Windows (ADR 0001/0002).
+- Criados no PostgreSQL 17 local: papel `ondetabarato` (LOGIN, CREATEDB) e banco `ondetabarato`. A senha do superusuário `postgres` não é usada pela aplicação e não está em nenhum arquivo.
+- Extensões disponíveis: `pg_trgm`, `unaccent`. **PostGIS continua indisponível** (precisa do instalador EDB/Stack Builder com administrador).
+- venv do backend em `backend/.venv` (Python 3.12.10, ignorado pelo Git).
+
 ## Pendências que dependem de autorização
 
-- Instalar WSL2 + Docker Desktop (administrador, reinício, ~vários GB).
+- Instalar PostGIS no PostgreSQL 17 + GDAL/GEOS para GeoDjango (administrador) antes do M2.
 - Aceitar licenças do Android SDK (`flutter doctor --android-licenses`), ação interativa que aceita termos em seu nome.
 - Instalar `uv` (opcional).

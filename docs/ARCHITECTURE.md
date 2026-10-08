@@ -14,7 +14,7 @@ Flutter (Android; iOS preparado)
                     └──► Storage de imagens (local no dev; S3/MinIO/R2 em prod)
 ```
 
-Ambientes: desenvolvimento em Windows, produção em Linux. O backend roda em containers Linux em ambos (ADR 0001).
+Ambientes: desenvolvimento nativo em Windows; produção em Docker na VPS Linux. O CI executa a suíte em Ubuntu para cobrir diferenças de plataforma (ADR 0001).
 
 ## Princípios arquiteturais
 
@@ -32,7 +32,7 @@ Apps são criados **somente no marco em que são usados**:
 
 | Marco | Apps | Modelos |
 |---|---|---|
-| M1 | `core`, `users`, `audit`, `locations` (utilitários geo) | User, Consent, papéis (RBAC), AuditLog; base models, soft delete, utilitários de dinheiro |
+| M1 | `core`, `users`, `audit` (`locations` entra no M2 com o PostGIS) | User, Consent, papéis (RBAC), AuditLog; base models, soft delete, utilitários de dinheiro |
 | M2 | `merchants`, `stores`, `products`, `prices` | Merchant, MerchantVerification, Store, Brand, Category, Product, ProductVariant, PriceObservation, PriceEvidence; comandos de seed (lojas via OSM, produtos via Open Food Facts) |
 | M3 | `promotions`, `offers`, `recommendations` | Promotion, Offer; motor de promoções; preço por unidade; consenso/confiança; score de custo-benefício |
 | M4 | `shopping_lists`, `shopping_cart` | ShoppingList(Item), ShoppingCart(Item) |
@@ -51,8 +51,9 @@ apps/<app>/
   services.py      # casos de uso (escrita, regras)
   selectors.py     # consultas (leitura)
   api/             # serializers, views, urls (DRF)
-  tests/
 ```
+
+Testes ficam em `backend/tests/<app>/`, espelhando os apps.
 
 Views finas; regras de negócio em `services`/`selectors`.
 
