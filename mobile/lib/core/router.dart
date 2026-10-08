@@ -4,12 +4,21 @@ import 'package:go_router/go_router.dart';
 
 import '../features/auth/auth_controller.dart';
 import '../features/auth/login_page.dart';
+import '../features/cart/cart_controller.dart';
+import '../features/cart/cart_page.dart';
+import '../features/products/product_page.dart';
+import '../features/products/products_page.dart';
+import '../features/shopping_lists/list_page.dart';
+import '../features/shopping_lists/lists_page.dart';
 import '../features/stores/stores_page.dart';
 
 abstract final class Routes {
   static const splash = '/';
   static const login = '/login';
   static const stores = '/stores';
+  static const products = '/products';
+  static const lists = '/lists';
+  static const cart = '/cart';
 }
 
 /// Lets GoRouter re-evaluate its redirect whenever the sign-in state changes.
@@ -43,7 +52,103 @@ final routerProvider = Provider<GoRouter>((ref) {
             const Scaffold(body: Center(child: CircularProgressIndicator())),
       ),
       GoRoute(path: Routes.login, builder: (_, _) => const LoginPage()),
-      GoRoute(path: Routes.stores, builder: (_, _) => const StoresPage()),
+      StatefulShellRoute.indexedStack(
+        builder: (_, _, shell) => MainShell(shell: shell),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: Routes.stores,
+                builder: (_, _) => const StoresPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: Routes.products,
+                builder: (_, _) => const ProductsPage(),
+                routes: [
+                  GoRoute(
+                    path: ':id',
+                    builder: (_, state) =>
+                        ProductPage(variantId: state.pathParameters['id']!),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: Routes.lists,
+                builder: (_, _) => const ListsPage(),
+                routes: [
+                  GoRoute(
+                    path: ':id',
+                    builder: (_, state) =>
+                        ListPage(listId: state.pathParameters['id']!),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(path: Routes.cart, builder: (_, _) => const CartPage()),
+            ],
+          ),
+        ],
+      ),
     ],
   );
 });
+
+/// The signed-in frame: one tab per branch, each keeping its own navigation stack.
+class MainShell extends ConsumerWidget {
+  const MainShell({super.key, required this.shell});
+
+  final StatefulNavigationShell shell;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final items = ref.watch(cartProvider).value?.items.length ?? 0;
+    return Scaffold(
+      body: shell,
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: shell.currentIndex,
+        onDestinationSelected: (index) =>
+            shell.goBranch(index, initialLocation: index == shell.currentIndex),
+        destinations: [
+          const NavigationDestination(
+            icon: Icon(Icons.storefront_outlined),
+            selectedIcon: Icon(Icons.storefront),
+            label: 'Lojas',
+          ),
+          const NavigationDestination(
+            icon: Icon(Icons.search),
+            label: 'Produtos',
+          ),
+          const NavigationDestination(
+            icon: Icon(Icons.checklist_outlined),
+            selectedIcon: Icon(Icons.checklist),
+            label: 'Listas',
+          ),
+          NavigationDestination(
+            icon: Badge(
+              isLabelVisible: items > 0,
+              label: Text('$items'),
+              child: const Icon(Icons.shopping_cart_outlined),
+            ),
+            selectedIcon: Badge(
+              isLabelVisible: items > 0,
+              label: Text('$items'),
+              child: const Icon(Icons.shopping_cart),
+            ),
+            label: 'Carrinho',
+          ),
+        ],
+      ),
+    );
+  }
+}

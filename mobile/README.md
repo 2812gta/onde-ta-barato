@@ -8,9 +8,19 @@ Stack (docs/ARCHITECTURE.md): Riverpod, GoRouter, Dio, `flutter_secure_storage` 
 lib/
   core/       config, rede (Dio + renovação do token), armazenamento seguro, rotas, tema
   features/
-    auth/     login, estado da sessão
-    stores/   lojas próximas
+    auth/            login, estado da sessão
+    stores/          lojas próximas (aba Lojas)
+    products/        busca e comparação de preços por unidade (aba Produtos)
+    shopping_lists/  listas de compras (aba Listas)
+    cart/            carrinho calculado no servidor (aba Carrinho)
 ```
+
+Regras que a interface segue (ADR 0012 e docs/USER_TRUST.md):
+
+- Dinheiro é sempre o **texto decimal** que o servidor enviou (`"24.00"`), nunca `double`. O app só formata.
+- O total do carrinho vem do servidor, a cada alteração. O app não soma preços.
+- Preço desatualizado, divergente ou sem valor é **sinalizado**, nunca escondido. Promoção de comerciante não verificado aparece como "não confirmada" e fica fora do total.
+- O selo "Menor preço encontrado na nossa base" só aparece quando o servidor o envia.
 
 ## Rodar no celular por cabo USB
 
