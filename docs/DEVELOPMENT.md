@@ -41,6 +41,21 @@ Copie `.env.example` para `.env` na raiz do repositório e preencha `SECRET_KEY`
 .\.venv\Scripts\python.exe -m mypy apps config        # tipos
 ```
 
+## Dados de demonstração
+
+```powershell
+.\.venv\Scripts\python.exe manage.py seed_demo              # senha aleatória, exibida uma vez
+.\.venv\Scripts\python.exe manage.py seed_demo --password "<senha>"
+```
+
+Cria dados **fictícios** em Fortaleza para desenvolver e demonstrar o app: 3 comerciantes (2 verificados e 1 pendente), 6 lojas, 16 apresentações de produto (inclui dois tamanhos de café e de arroz para o preço por unidade), 64 preços, 5 promoções de tipos diferentes e 7 usuários (`*@demo.ondetabarato.invalid`, domínio reservado que nunca recebe e-mail).
+
+O conjunto cobre os cenários do M3: preço desatualizado (hortifruti de 10 dias na loja de Messejana), preço contestado (arroz de 5 kg a R$ 20,90 informado por usuário, contestado por dois), preço promocional com validade e um comerciante não verificado cujos dados pesam menos.
+
+- Usa os mesmos serviços da API (verificação de comerciante, registro de preço, promoções, confirmações), então respeita as regras e gera auditoria.
+- É repetível: uma segunda execução não cria nada. O histórico de preços é append-only, então não há "reset"; para recomeçar, recrie o banco de desenvolvimento.
+- Recusa rodar com `config.settings.production`. Tudo é identificado com o prefixo `[DEMO]`, sem CNPJ e sem GTIN; as coordenadas são aproximadas.
+
 Swagger: http://localhost:8000/api/docs/ · Health: http://localhost:8000/health/
 
 ## Paridade com Linux
