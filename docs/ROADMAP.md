@@ -1,0 +1,22 @@
+# Roadmap
+
+Regra: executar o marco, testar, documentar, apresentar e **aguardar aprovação** antes do próximo.
+
+| Marco | Escopo | Estado |
+|---|---|---|
+| M0 Fundação | Auditoria do ambiente, Git, estrutura, documentação inicial | Em validação |
+| M1 Backend | Django + DRF, PostgreSQL/PostGIS em Docker, JWT, RBAC (com matriz de permissões), AuditLog, OpenAPI, rate limiting, e-mail transacional, consentimento e exclusão de conta (LGPD), soft delete, **CI (GitHub Actions)**, Dockerfile `dev`/`prod` | Pendente |
+| M2 Núcleo comercial | Merchant, Store (PointField), Product/Variant (GTIN), Category, PriceObservation/Evidence, histórico, confiança, **seed de lojas e produtos** | Pendente |
+| M3 Inteligência de preços | Preço por unidade, promoções, conflitos, score, custo-benefício, distância, teste de isolamento comercial | Pendente |
+| M4 Flutter | Login, localização, lojas próximas, produtos, preços, lista, carrinho | Pendente |
+| M5 Câmera | Câmera, OCR, identificação, IA, confirmação, contribuição, FraudSignal | Pendente |
+| M6 Comerciantes | Cadastro, verificação, preços, promoções, ofertas, moderação | Pendente |
+| M7 Inteligência avançada | Recomendações, otimização de lista, histórico, economia, analytics | Pendente |
+| M8 Escala | Voz, notificações (FCM/APNs), reputação, cashback, fidelidade | Pendente |
+
+## Antes do primeiro deploy
+
+- Backup do PostgreSQL com restauração testada.
+- Contato de segurança definido (SECURITY.md).
+- Revisão jurídica de TERMS, PRIVACY, CONTRIBUTION_POLICY e LGPD.
+- Definição de hospedagem.
