@@ -6,7 +6,7 @@ Assistente inteligente de compras: ajuda o consumidor a descobrir **onde vale ma
 
 ## Status
 
-**M1 — Backend** (em validação): autenticação, RBAC, auditoria, LGPD básica. Status real e pendências em [docs/ROADMAP.md](docs/ROADMAP.md).
+**M2 — Núcleo comercial** (em validação): comerciantes, lojas com geolocalização, catálogo por GTIN, histórico de preços com confiança explicável. M0 e M1 concluídos. Status real e pendências em [docs/ROADMAP.md](docs/ROADMAP.md).
 
 ## Stack
 
