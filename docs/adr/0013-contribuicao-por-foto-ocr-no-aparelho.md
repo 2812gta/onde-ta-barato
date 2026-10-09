@@ -1,0 +1,17 @@
+# ADR 0013: Contribuição por foto, OCR no aparelho e confirmação obrigatória
+
+Status: **Aceita**
+
+Contexto: o M5 deixa o usuário fotografar uma etiqueta de preço e contribuir com ele. Três riscos pesam: custo (OCR/IA pagos por foto), privacidade (foto com GPS, rosto, documento) e confiança (um preço lido errado, ou forjado, entrar na base como se fosse verdade).
+
+Decisão:
+- **OCR no celular (ML Kit), sem custo e sem enviar a imagem a terceiros** (preferência já registrada em AI_GOVERNANCE.md). O servidor recebe a foto e o texto lido, e **interpreta** o texto (`contributions/extraction.py`, `matching.py`). Toda a lógica de interpretação mora no backend para ser testada lá; o app só captura e mostra. `OCRProvider` continua sendo a interface para um motor de servidor no futuro; hoje não há implementação, e isso é intencional.
+- **Nada vira preço sem confirmação.** O envio cria um rascunho (`UserContribution`, `DRAFT`). Só `POST .../confirm/` grava o preço, e ele recebe os valores **finais do usuário**, não os lidos. Se o preço ou o produto diferem do sugerido, a contribuição fica marcada `corrected`. `cancel` descarta.
+- **FATO vs INFERÊNCIA** em toda sugestão (`origin`): preço e código de barras lidos, com dígito verificador válido, são `FACT`; produto deduzido por palavras em comum é `INFERENCE`. Casamento por GTIN exato é `FACT`. Preço por unidade (`/kg`) e quantidade (`1,5 kg`) nunca são candidatos a preço de prateleira.
+- **Preço da contribuição = `USER`**, com a mesma confiança, deduplicação e regras de equipe-da-loja de qualquer preço de consumidor (`report_user_price`). A foto vira `PriceEvidence` (EXIF/GPS removidos; reencode feito uma só vez). Se outro usuário já havia informado o mesmo preço, a contribuição vira uma **confirmação independente** dele e a foto não é guardada.
+- **Retenção mínima:** a foto vive no rascunho por no máximo 24 h. Ao confirmar, é apagada do rascunho (resta só o SHA-256, para detectar reuso); ao cancelar ou expirar, é apagada. `manage.py purge_stale_drafts` expira os vencidos (agendar no deploy). No máximo 5 rascunhos abertos por usuário; 30 envios/hora.
+- **Localização:** `lat/lon` viajam no corpo do `confirm` só para checar proximidade e **nunca são gravados** (ADR 0009). O resultado vira `location_verified` e, se falhar, um sinal.
+- **`FraudSignal` aponta, não decide.** Regras determinísticas (`contributions/fraud.py`): foto repetida, preço fora de 0,5x–2x da mediana (≥ 3 amostras em 30 dias), 10 contribuições confirmadas em 1 h, aparelho longe da loja, localização ausente, foto com mais de 6 h. Os sinais são append-only, vão para a moderação (Django Admin) e **não** bloqueiam, escondem nem alteram a confiança do preço. O contribuinte não é informado de quais regras dispararam. Combinação de sinais, cadência e calibração dos limites são do M6 (moderação) com dados reais.
+- `contributions/{extraction,fraud,matching}.py` entram na lista protegida do teste de isolamento comercial.
+
+Consequências: o custo de OCR é zero e a foto nunca sai do aparelho para terceiros; o app fica fino e a regra testável. Em troca, a qualidade da leitura depende do ML Kit do aparelho, e os limites de fraude são uma primeira proposta, sem calibração. O app só é exercitado num aparelho com Flutter novo (o Flutter deste PC não compila o projeto).

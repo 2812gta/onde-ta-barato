@@ -33,6 +33,9 @@ PROTECTED = [
     "recommendations/services.py",
     "recommendations/present.py",
     "shopping_cart/pricing.py",
+    "contributions/extraction.py",
+    "contributions/fraud.py",
+    "contributions/matching.py",
 ]
 # Apps that carry money from merchants to the platform (some are created in later milestones).
 COMMERCIAL_APPS = {

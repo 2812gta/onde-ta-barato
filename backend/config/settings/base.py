@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "apps.recommendations",
     "apps.shopping_lists",
     "apps.shopping_cart",
+    "apps.contributions",
 ]
 
 MIDDLEWARE = [
@@ -167,6 +168,7 @@ REST_FRAMEWORK = {
         "verification": "5/hour",
         "geo": "120/min",
         "price_write": "60/hour",
+        "contribution": "30/hour",
     },
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 50,
@@ -200,6 +202,7 @@ SPECTACULAR_SETTINGS = {
         "PaymentConditionEnum": "apps.prices.models.PaymentCondition.choices",
         "ShopperPaymentEnum": "apps.recommendations.serializers.SHOPPER_PAYMENT_CHOICES",
         "PriceSourceEnum": "apps.prices.models.PriceSource.choices",
+        "ContributionStatusEnum": "apps.contributions.models.ContributionStatus.choices",
     },
 }
 

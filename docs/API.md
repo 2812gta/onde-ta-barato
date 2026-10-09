@@ -108,4 +108,20 @@ Listas e carrinho pertencem ao usuário logado. A lista ou o item de outra pesso
 
 Regras do preço, iguais às das recomendações (ADR 0012): preço vencido não é usado e o desatualizado é sinalizado; com fontes divergentes vale o **maior** preço; só promoção de comerciante **verificado** altera o total (as demais aparecem em `unconfirmed_potential`); item sem preço fica **fora** do total e é contado em `unpriced_count`, nunca estimado.
 
-O OpenAPI (`/api/schema/`) documenta os 45 endpoints sem avisos.
+## Implementado (M5, backend)
+
+Contribuição de preço por foto (ADR 0013). Tudo é do usuário logado; a contribuição de outro responde 403 (envio/confirmação) ou 404 (leitura). Nada vira preço antes do `confirm`.
+
+| Método | Rota | Descrição |
+|---|---|---|
+| GET | `/contributions/` | Suas contribuições (até 50), sem foto |
+| POST | `/contributions/` | `multipart`: `store_id`, `photo` (JPEG/PNG/WEBP, até 8 MB), `ocr_text` (até 5000 caracteres, lido no aparelho), `captured_at` opcional. Cria o **rascunho** e devolve a leitura e as sugestões. Máx. 5 rascunhos abertos; 30 envios/hora |
+| GET | `/contributions/{id}/` | O rascunho com `reading` e `suggested_variants` |
+| POST | `/contributions/{id}/confirm/` | `{variant_id, price, payment_condition, is_promotional, lat?, lon?}`. Grava o preço (`source: USER`) com a foto como evidência. `lat/lon` só checam proximidade e não são guardados |
+| POST | `/contributions/{id}/cancel/` | Descarta o rascunho e apaga a foto |
+
+**Leitura (`reading`):** `prices` (valor, texto lido, linha, `has_currency`), `gtins` (já com dígito verificador válido) e `name_lines`. **`suggested_variants`:** até 5 produtos do catálogo com `basis` (`GTIN` ou `TEXT`). Cada item traz `origin`: `FACT` (lido na imagem) ou `INFERENCE` (interpretado). São sugestões: o usuário confere e pode mudar.
+
+Rascunho com mais de 24 h expira (400 ao confirmar). `FraudSignal` não aparece na API: é só para a moderação.
+
+O OpenAPI (`/api/schema/`) documenta os endpoints sem avisos.

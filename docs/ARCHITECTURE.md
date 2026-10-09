@@ -36,7 +36,7 @@ Apps são criados **somente no marco em que são usados**:
 | M2 | `merchants`, `stores`, `products`, `prices` | Merchant, MerchantVerification, Store, Brand, Category, Product, ProductVariant, PriceObservation, PriceEvidence; comandos de seed (lojas via OSM, produtos via Open Food Facts) |
 | M3 | `promotions`, `recommendations` | Promotion; motor de promoções; comparação por unidade; score de custo-benefício. `offers` (ofertas/encartes/patrocínio) foi **adiado para o M6/M8** para não criar um app vazio |
 | M4 | `shopping_lists`, `shopping_cart` | ShoppingList(Item), ShoppingCart(Item) |
-| M5 | `ocr`, `ai`, `fraud` | UserContribution (em `prices`), FraudSignal, AIProcessingJob; AIProvider, OCRProvider |
+| M5 | `contributions` (reúne o que estava previsto como `ocr`, `fraud`) | UserContribution, FraudSignal; interpretação do texto lido, casamento com o catálogo e regras de fraude. OCR roda no aparelho (ADR 0013); `ai`/`AIProvider` ficam para quando houver uso real de IA |
 | M6 | portal do comerciante, moderação | verificação, publicação de preços/ofertas, fila de moderação |
 | M7 | `analytics` | histórico, economia, otimização de lista |
 | M8 | `voice`, `notifications`, `reviews`, `subscriptions` | VoiceProvider, FCM/APNs, reputação, planos |

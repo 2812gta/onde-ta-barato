@@ -69,7 +69,11 @@ location_verified                        # o aparelho estava perto da loja; coor
 
 ### Evidência
 
-`PriceEvidence`: foto/encarte (arquivo privado, sem URL pública) ou link `http(s)`. Imagens são validadas e **reencodadas em JPEG sem metadados** (remove EXIF/GPS e conteúdo anexado), limite de 8 MB e 40 MP, SHA-256 do arquivo final. Ainda **não há endpoint de upload**: o serviço existe e é testado; o endpoint entra com a câmera (M5).
+`PriceEvidence`: foto/encarte (arquivo privado, sem URL pública) ou link `http(s)`. Imagens são validadas e **reencodadas em JPEG sem metadados** (remove EXIF/GPS e conteúdo anexado), limite de 8 MB e 40 MP, SHA-256 do arquivo final. O upload acontece pelo fluxo de contribuição (M5), não por endpoint avulso.
+
+### Contribuição por foto (M5)
+
+`UserContribution` (app `contributions`): `user`, `store`, `status` (`DRAFT`/`CONFIRMED`/`CANCELLED`), `photo` (só enquanto rascunho), `photo_sha256`, `captured_at`, `ocr_text`, `extraction` (JSON com `origin` FACT/INFERENCE), `corrected`, `observation` (preenchida ao confirmar). **Não é append-only**: muda de estado e perde a foto. `FraudSignal` é append-only: `kind`, `severity`, `detail`; existe só para a moderação. Ver [ADR 0013](adr/0013-contribuicao-por-foto-ocr-no-aparelho.md).
 
 ## Retenção
 

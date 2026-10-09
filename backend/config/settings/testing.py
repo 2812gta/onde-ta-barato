@@ -21,5 +21,6 @@ REST_FRAMEWORK = {  # noqa: F405
         "verification": "100000/min",
         "geo": "100000/min",
         "price_write": "100000/min",
+        "contribution": "100000/min",
     },
 }

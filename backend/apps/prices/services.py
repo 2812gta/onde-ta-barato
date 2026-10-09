@@ -56,6 +56,11 @@ def _near_store(store: Store, lat: float, lon: float) -> bool:
     ).exists()
 
 
+def is_near_store(store: Store, lat: float, lon: float) -> bool:
+    """Whether a device position is close enough to vouch for a store visit."""
+    return _near_store(store, lat, lon)
+
+
 @transaction.atomic
 def record_price(
     *,
@@ -226,6 +231,29 @@ def add_evidence(
     if content is None:
         raise ValidationError("Arquivo obrigatório.")
     clean, digest = sanitize_image(content)
+    return attach_sanitized_evidence(
+        observation=observation,
+        actor=actor,
+        kind=kind,
+        clean=clean,
+        digest=digest,
+        captured_at=captured_at,
+    )
+
+
+@transaction.atomic
+def attach_sanitized_evidence(
+    *,
+    observation: PriceObservation,
+    actor: User,
+    kind: str,
+    clean: bytes,
+    digest: str,
+    captured_at: datetime | None = None,
+) -> PriceEvidence:
+    """Store an image that `sanitize_image` already cleaned (no second re-encode)."""
+    if observation.created_by_id != actor.pk:
+        raise PermissionDenied("Apenas o autor do registro anexa evidência.")
     evidence = PriceEvidence(
         observation=observation,
         kind=kind,

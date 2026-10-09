@@ -29,6 +29,8 @@ Tratada como dado de alto risco operacional: sem rastreamento contínuo; preferi
 
 Finalidade, retenção definida, acesso controlado, não públicas por padrão, processo futuro de remoção de rostos e documentos. Envio a terceiros (OCR/IA) documentado, com o fornecedor e a transferência.
 
+**Como o M5 trata (ADR 0013):** o OCR roda no aparelho, então a foto **não vai a nenhum terceiro**. No servidor, EXIF/GPS são removidos antes de gravar. A foto fica no rascunho por no máximo 24 h e é apagada ao confirmar, cancelar ou expirar (`purge_stale_drafts`); só é mantida como evidência do preço quando o usuário confirma e a evidência é anexada ao seu registro. Fica o SHA-256 para detectar reuso. A localização enviada ao confirmar só checa proximidade e não é armazenada. **Pendente:** prazo de retenção da evidência confirmada, regra de exclusão da evidência quando a conta é excluída, e processo de remoção de rostos/documentos.
+
 ## Retenção (a definir no M1)
 
 Logs de aplicação, auditoria, histórico de preços, evidências, contas excluídas (anonimização preserva integridade do histórico de preços).

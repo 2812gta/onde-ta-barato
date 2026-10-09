@@ -242,6 +242,15 @@ def export_user_data(user: User) -> dict[str, Any]:
             }
             for shopping_list in user.shopping_lists.all()
         ],
+        "contributions": [
+            {
+                "store": c.store.name,
+                "status": c.status,
+                "corrected": c.corrected,
+                "at": c.created_at.isoformat(),
+            }
+            for c in user.contributions.select_related("store").order_by("created_at")
+        ],
         "activity": [
             {"action": a.action, "entity_type": a.entity_type, "at": a.created_at.isoformat()}
             for a in user.audit_logs.order_by("created_at")
@@ -258,6 +267,10 @@ def delete_account(*, user: User, password: str, request: HttpRequest | None = N
     # Shopping habits are personal data with no history value: erased, not anonymized.
     user.shopping_lists.all().delete()
     user.shopping_carts.all().delete()
+    # Photos still waiting for confirmation are personal data: deleted now, not at expiry.
+    from apps.contributions.services import discard_open_drafts
+
+    discard_open_drafts(user)
     audit.record("user.deleted", actor=user, entity_type="user", entity_id=user.pk, request=request)
     user.email = f"deleted-{user.pk}@deleted.invalid"
     user.display_name = ""
