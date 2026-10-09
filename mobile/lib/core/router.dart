@@ -6,16 +6,19 @@ import '../features/auth/auth_controller.dart';
 import '../features/auth/login_page.dart';
 import '../features/cart/cart_controller.dart';
 import '../features/cart/cart_page.dart';
+import '../features/contributions/contribute_page.dart';
 import '../features/products/product_page.dart';
 import '../features/products/products_page.dart';
 import '../features/shopping_lists/list_page.dart';
 import '../features/shopping_lists/lists_page.dart';
+import '../features/stores/store.dart';
 import '../features/stores/stores_page.dart';
 
 abstract final class Routes {
   static const splash = '/';
   static const login = '/login';
   static const stores = '/stores';
+  static const contribute = '/stores/contribute';
   static const products = '/products';
   static const lists = '/lists';
   static const cart = '/cart';
@@ -60,6 +63,17 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: Routes.stores,
                 builder: (_, _) => const StoresPage(),
+                routes: [
+                  GoRoute(
+                    path: 'contribute',
+                    // The store comes from the tile that was tapped; without it there is
+                    // nothing to contribute to, so go back to the list.
+                    redirect: (_, state) =>
+                        state.extra is Store ? null : Routes.stores,
+                    builder: (_, state) =>
+                        ContributePage(store: state.extra! as Store),
+                  ),
+                ],
               ),
             ],
           ),

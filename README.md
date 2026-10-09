@@ -6,7 +6,7 @@ Assistente inteligente de compras: ajuda o consumidor a descobrir **onde vale ma
 
 ## Status
 
-**M5 — Câmera e contribuição de preços** (em andamento). M4 (app Flutter: lojas, produtos, listas, "Onde comprar?", carrinho) concluído; M3 (inteligência de preços) e M2 (núcleo comercial) em revisão; M0 e M1 concluídos. Status real e pendências em [docs/ROADMAP.md](docs/ROADMAP.md).
+**M5 — Câmera e contribuição de preços** (concluído, aguardando aprovação). M4 (app Flutter: lojas, produtos, listas, "Onde comprar?", carrinho) concluído; M3 (inteligência de preços) e M2 (núcleo comercial) em revisão; M0 e M1 concluídos. Status real e pendências em [docs/ROADMAP.md](docs/ROADMAP.md).
 
 ## Stack
 

@@ -1,3 +1,5 @@
+import '../../core/format.dart';
+
 /// A purchasable presentation (e.g. "Arroz Branco 5 kg"). Prices attach to this, never to the
 /// bare product, so a unit price can compare sizes honestly.
 class Variant {
@@ -25,6 +27,14 @@ class Variant {
   final String label;
   final String quantity;
   final String unit;
+
+  /// "Arroz Branco · Grão Dourado · Tipo 1 · 5 kg"
+  String get title => [
+    name,
+    if (brand != null && brand!.isNotEmpty) brand!,
+    if (label.isNotEmpty) label,
+    formatSize(quantity, unit),
+  ].join(' · ');
 }
 
 class StoreQuote {

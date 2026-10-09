@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/format.dart';
 import '../../core/network/api_client.dart';
+import '../../core/router.dart';
 import '../auth/auth_controller.dart';
 import 'location_service.dart';
 import 'store.dart';
@@ -116,9 +118,19 @@ class _StoreTile extends StatelessWidget {
           store.place,
         ].where((s) => s.isNotEmpty).join(' · '),
       ),
-      trailing: Text(
-        formatDistance(store.distanceMeters),
-        style: theme.textTheme.labelLarge,
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            formatDistance(store.distanceMeters),
+            style: theme.textTheme.labelLarge,
+          ),
+          IconButton(
+            tooltip: 'Fotografar um preço aqui',
+            icon: const Icon(Icons.photo_camera_outlined),
+            onPressed: () => context.push(Routes.contribute, extra: store),
+          ),
+        ],
       ),
     );
   }

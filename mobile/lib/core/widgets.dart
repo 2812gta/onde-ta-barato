@@ -81,13 +81,32 @@ Future<bool> attempt(
     await action();
     return true;
   } catch (error) {
-    final text = error is ApiException
-        ? error.message
-        : 'Não foi possível concluir. Tente de novo.';
-    messenger
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(text)));
+    _showFailure(messenger, error);
     return false;
+  }
+}
+
+void _showFailure(ScaffoldMessengerState messenger, Object error) {
+  final text = error is ApiException
+      ? error.message
+      : 'Não foi possível concluir. Tente de novo.';
+  messenger
+    ..hideCurrentSnackBar()
+    ..showSnackBar(SnackBar(content: Text(text)));
+}
+
+/// Like [attempt], but returns the action's result, or null when it failed (the message was
+/// already shown). A legitimately null result is indistinguishable from a failure.
+Future<T?> attemptValue<T>(
+  BuildContext context,
+  Future<T> Function() action,
+) async {
+  final messenger = ScaffoldMessenger.of(context);
+  try {
+    return await action();
+  } catch (error) {
+    _showFailure(messenger, error);
+    return null;
   }
 }
 
