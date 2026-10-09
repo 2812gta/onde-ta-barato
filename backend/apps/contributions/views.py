@@ -8,6 +8,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.moderation import services as moderation_services
+from apps.moderation.serializers import AppealCreateSerializer
 from apps.prices.views import _price_response
 from apps.stores.models import Store
 from apps.users.models import User
@@ -95,3 +97,30 @@ class ContributionCancelView(APIView):
             contribution_id=contribution_id, user=cast(User, request.user)
         )
         return Response(ContributionSerializer(contribution).data)
+
+
+class ContributionAppealView(APIView):
+    """The contributor contests a price that moderators hid."""
+
+    throttle_scope = "contribution"
+
+    @extend_schema(request=AppealCreateSerializer, responses={201: ContributionSerializer})
+    def post(self, request: Request, contribution_id: str) -> Response:
+        contribution = get_object_or_404(
+            UserContribution.objects.select_related("store", "observation"),
+            pk=contribution_id,
+            user=cast(User, request.user),
+        )
+        if contribution.observation is None:
+            return Response(
+                {"detail": "Esta contribuição não gerou um preço."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        serializer = AppealCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        moderation_services.appeal(
+            observation=contribution.observation,
+            user=cast(User, request.user),
+            message=serializer.validated_data["message"],
+        )
+        return Response(ContributionSerializer(contribution).data, status=status.HTTP_201_CREATED)

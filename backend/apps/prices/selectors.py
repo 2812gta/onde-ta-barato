@@ -15,6 +15,7 @@ from django.conf import settings
 from django.db.models import Count, QuerySet
 
 from apps.core import clock
+from apps.moderation.selectors import exclude_hidden
 from apps.products.models import ProductVariant
 from apps.products.units import UnitPrice, unit_price
 
@@ -148,8 +149,10 @@ def current_prices(
     now = now or clock.now()
     horizon = now - timedelta(days=getattr(settings, "PRICE_MAX_LISTED_AGE_DAYS", 90))
     observations = list(
-        PriceObservation.objects.filter(
-            product_variant=variant, store_id__in=list(store_ids), collected_at__gte=horizon
+        exclude_hidden(
+            PriceObservation.objects.filter(
+                product_variant=variant, store_id__in=list(store_ids), collected_at__gte=horizon
+            )
         )
         .select_related("store__merchant")
         .order_by("store_id", "payment_condition", "source", "-collected_at", "-created_at")
@@ -168,7 +171,9 @@ def price_history(
     payment_condition: str | None = None,
     limit: int = 200,
 ) -> QuerySet[PriceObservation]:
-    queryset = PriceObservation.objects.filter(product_variant=variant, store_id=store_id)
+    queryset = exclude_hidden(
+        PriceObservation.objects.filter(product_variant=variant, store_id=store_id)
+    )
     if payment_condition:
         queryset = queryset.filter(payment_condition=payment_condition)
     return queryset.select_related("supersedes").order_by("-collected_at", "-created_at")[:limit]

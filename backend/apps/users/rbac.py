@@ -19,6 +19,7 @@ AUDIT_VIEW = "audit.view"
 CATALOG_WRITE = "catalog.write"
 MERCHANTS_REVIEW = "merchants.review"
 MERCHANTS_SUSPEND = "merchants.suspend"
+MODERATION_REVIEW = "moderation.review"
 
 ALL_PERMISSIONS = frozenset(
     {
@@ -29,6 +30,7 @@ ALL_PERMISSIONS = frozenset(
         CATALOG_WRITE,
         MERCHANTS_REVIEW,
         MERCHANTS_SUSPEND,
+        MODERATION_REVIEW,
     }
 )
 
@@ -41,7 +43,7 @@ ROLE_PERMISSIONS: dict[str, frozenset[str]] = {
     Role.MERCHANT_OWNER: _MERCHANT,
     Role.MERCHANT_MANAGER: _MERCHANT,
     Role.MERCHANT_OPERATOR: _MERCHANT,
-    Role.MODERATOR: frozenset({USERS_VIEW, CATALOG_WRITE, MERCHANTS_REVIEW}),
+    Role.MODERATOR: frozenset({USERS_VIEW, CATALOG_WRITE, MERCHANTS_REVIEW, MODERATION_REVIEW}),
     Role.SUPPORT: frozenset({USERS_VIEW}),
     Role.ADMIN: frozenset(
         {
@@ -51,6 +53,7 @@ ROLE_PERMISSIONS: dict[str, frozenset[str]] = {
             CATALOG_WRITE,
             MERCHANTS_REVIEW,
             MERCHANTS_SUSPEND,
+            MODERATION_REVIEW,
         }
     ),
     Role.SUPERADMIN: ALL_PERMISSIONS,

@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from rest_framework import serializers
 
+from apps.moderation import selectors as moderation_selectors
 from apps.prices.models import PaymentCondition
 from apps.products.models import ProductVariant
 from apps.products.serializers import VariantSerializer
@@ -43,6 +44,14 @@ class ContributionSerializer(serializers.ModelSerializer):
     store_name = serializers.CharField(source="store.name", read_only=True)
     observation_id = serializers.UUIDField(read_only=True)
     expires_at = serializers.DateTimeField(read_only=True)
+    moderation = serializers.SerializerMethodField()
+
+    def get_moderation(self, obj: UserContribution) -> dict | None:
+        """Whether moderators hid this price, and why. A hidden price always has a reason."""
+        if obj.observation_id is None:
+            return None
+        state = moderation_selectors.state_of(obj.observation_id)
+        return {"state": state.state, "reason": state.reason, "can_appeal": state.can_appeal}
 
     class Meta:
         model = UserContribution
@@ -57,6 +66,7 @@ class ContributionSerializer(serializers.ModelSerializer):
             "created_at",
             "expires_at",
             "resolved_at",
+            "moderation",
         ]
         read_only_fields = fields
 

@@ -71,6 +71,10 @@ location_verified                        # o aparelho estava perto da loja; coor
 
 `PriceEvidence`: foto/encarte (arquivo privado, sem URL pública) ou link `http(s)`. Imagens são validadas e **reencodadas em JPEG sem metadados** (remove EXIF/GPS e conteúdo anexado), limite de 8 MB e 40 MP, SHA-256 do arquivo final. O upload acontece pelo fluxo de contribuição (M5), não por endpoint avulso.
 
+### Moderação (M6)
+
+`PriceModeration` (somente-anexar): `observation`, `action` (`HIDE`/`RESTORE`/`UPHOLD`), `reason`, `actor`. O estado de um preço é a última decisão; o preço nunca é editado. `PriceAppeal` (somente-anexar, um por `HIDE`) e `SignalReview` (somente-anexar, um por `FraudSignal`). Ver [ADR 0014](adr/0014-moderacao-de-precos-de-consumidores.md).
+
 ### Contribuição por foto (M5)
 
 `UserContribution` (app `contributions`): `user`, `store`, `status` (`DRAFT`/`CONFIRMED`/`CANCELLED`), `photo` (só enquanto rascunho), `photo_sha256`, `captured_at`, `ocr_text`, `extraction` (JSON com `origin` FACT/INFERENCE), `corrected`, `observation` (preenchida ao confirmar). **Não é append-only**: muda de estado e perde a foto. `FraudSignal` é append-only: `kind`, `severity`, `detail`; existe só para a moderação. Ver [ADR 0013](adr/0013-contribuicao-por-foto-ocr-no-aparelho.md).

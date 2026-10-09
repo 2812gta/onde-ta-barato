@@ -8,4 +8,4 @@
 - Proibido: preços falsos, spam, automação, contas múltiplas coordenadas.
 - Sinais de fraude levam a revisão por moderação, não a bloqueio automático por um único sinal. Hoje: foto repetida, preço muito fora do usual, rajada de contribuições, aparelho longe da loja, localização ausente e foto antiga (ADR 0013).
 - A contribuição só é registrada depois que o usuário confere e **confirma** (ou corrige) o que foi lido; o que a leitura sugere nunca é gravado sozinho.
-- Contribuições contestadas são ocultadas com justificativa e registro em auditoria; há recurso.
+- Contribuições contestadas são ocultadas com justificativa e registro em auditoria; há recurso. Na prática (ADR 0014): só moderadores ocultam; o motivo é mostrado ao contribuinte; ele recorre uma vez por decisão; o preço oculto é preservado nos registros, nunca apagado; ninguém modera o próprio preço.

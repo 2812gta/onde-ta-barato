@@ -15,6 +15,11 @@ urlpatterns = [
         name="contribution-confirm",
     ),
     path(
+        "contributions/<uuid:contribution_id>/appeal/",
+        views.ContributionAppealView.as_view(),
+        name="contribution-appeal",
+    ),
+    path(
         "contributions/<uuid:contribution_id>/cancel/",
         views.ContributionCancelView.as_view(),
         name="contribution-cancel",

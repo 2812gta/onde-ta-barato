@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "apps.shopping_lists",
     "apps.shopping_cart",
     "apps.contributions",
+    "apps.moderation",
 ]
 
 MIDDLEWARE = [
@@ -203,6 +204,8 @@ SPECTACULAR_SETTINGS = {
         "ShopperPaymentEnum": "apps.recommendations.serializers.SHOPPER_PAYMENT_CHOICES",
         "PriceSourceEnum": "apps.prices.models.PriceSource.choices",
         "ContributionStatusEnum": "apps.contributions.models.ContributionStatus.choices",
+        "ModerationActionEnum": "apps.moderation.models.ModerationAction.choices",
+        "SignalDecisionEnum": "apps.moderation.models.SignalDecision.choices",
     },
 }
 

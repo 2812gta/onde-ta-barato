@@ -27,16 +27,16 @@
 | PATCH | `/users/{id}/role/` | `users.change_role` (SUPERADMIN) | Altera papel; auditado |
 | GET | `/audit/logs/` | `audit.view` (ADMIN, SUPERADMIN) | Leitura da auditoria; não expõe IP |
 
-## Matriz RBAC (M1 + M2)
+## Matriz RBAC (M1 + M2 + M6)
 
-| Papel | users.view | users.manage | users.change_role | audit.view | catalog.write | merchants.review | merchants.suspend |
-|---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-| CUSTOMER | | | | | | | |
-| MERCHANT_OWNER / MANAGER / OPERATOR | | | | | ✔ | | |
-| SUPPORT | ✔ | | | | | | |
-| MODERATOR | ✔ | | | | ✔ | ✔ | |
-| ADMIN | ✔ | ✔ | | ✔ | ✔ | ✔ | ✔ |
-| SUPERADMIN | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
+| Papel | users.view | users.manage | users.change_role | audit.view | catalog.write | merchants.review | merchants.suspend | moderation.review |
+|---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| CUSTOMER | | | | | | | | |
+| MERCHANT_OWNER / MANAGER / OPERATOR | | | | | ✔ | | | |
+| SUPPORT | ✔ | | | | | | | |
+| MODERATOR | ✔ | | | | ✔ | ✔ | | ✔ |
+| ADMIN | ✔ | ✔ | | ✔ | ✔ | ✔ | ✔ | ✔ |
+| SUPERADMIN | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
 
 Regras **por objeto** (publicar preço, editar loja, gerir equipe) não estão nesta matriz: dependem do vínculo `MerchantMembership` com aquele comerciante (proprietário, gerente, operador). Permissões novas são adicionadas pelo marco que as introduz; o teste da matriz falha de propósito se ela mudar sem atualização consciente.
 
@@ -123,5 +123,20 @@ Contribuição de preço por foto (ADR 0013). Tudo é do usuário logado; a cont
 **Leitura (`reading`):** `prices` (valor, texto lido, linha, `has_currency`), `gtins` (já com dígito verificador válido) e `name_lines`. **`suggested_variants`:** até 5 produtos do catálogo com `basis` (`GTIN` ou `TEXT`). Cada item traz `origin`: `FACT` (lido na imagem) ou `INFERENCE` (interpretado). São sugestões: o usuário confere e pode mudar.
 
 Rascunho com mais de 24 h expira (400 ao confirmar). `FraudSignal` não aparece na API: é só para a moderação.
+
+## Implementado (M6, moderação)
+
+Decisões sobre preços de **consumidores** (ADR 0014). Exigem `moderation.review` (MODERATOR, ADMIN, SUPERADMIN); dono de loja e cliente recebem **403**. Toda decisão pede `reason` (10 a 1000 caracteres), gera auditoria e é mostrada ao contribuinte.
+
+| Método | Rota | Descrição |
+|---|---|---|
+| GET | `/moderation/queue/` | `signals` (sinais ainda não revistos, mais graves primeiro) e `appeals` (recursos sem resposta). O contribuinte aparece só como id opaco |
+| POST | `/moderation/signals/{id}/review/` | `{decision: CONFIRMED ou DISMISSED, note?}`. Não oculta nada por si |
+| POST | `/moderation/prices/{id}/hide/` | Oculta o preço (só `source: USER`; nunca o próprio) |
+| POST | `/moderation/prices/{id}/restore/` | Restaura um preço oculto |
+| POST | `/moderation/prices/{id}/uphold/` | Mantém oculto após um recurso. Encerra o recurso |
+| POST | `/contributions/{id}/appeal/` | O contribuinte recorre, `{message}`, uma vez por decisão de ocultar |
+
+`GET /contributions/` passa a trazer `moderation`: `{state: VISIBLE, HIDDEN, APPEAL_PENDING ou UPHELD, reason, can_appeal}`. Preço oculto some de `prices/search`, do histórico, das recomendações e do carrinho.
 
 O OpenAPI (`/api/schema/`) documenta os endpoints sem avisos.
